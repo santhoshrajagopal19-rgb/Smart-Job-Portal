@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute, RoleProtectedRoute } from './components/ProtectedRoute';
+import { useAuth } from './hooks/useAuth';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -12,9 +13,19 @@ import CandidateDashboard from './pages/CandidateDashboard';
 import RecruiterDashboard from './pages/RecruiterDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 
+const PublicOnlyRoute = ({ children }) => {
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return null;
+  }
+
+  return isAuthenticated ? <Navigate to="/dashboard" replace /> : children;
+};
+
 // Dynamic dashboard route based on user role
 const DynamicDashboard = () => {
-  const { user } = require('./hooks/useAuth').useAuth();
+  const { user } = useAuth();
 
   if (!user) {
     return <Navigate to="/login" replace />;
@@ -28,7 +39,7 @@ const DynamicDashboard = () => {
     return <AdminDashboard />;
   }
 
-  return <Navigate to="/" replace />;
+  return <Navigate to="/login" replace />;
 };
 
 function App() {
@@ -36,19 +47,57 @@ function App() {
     <Router>
       <AuthProvider>
         <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<AuthPage isLogin={true} />} />
-          <Route path="/register" element={<AuthPage isLogin={false} />} />
-          <Route path="/jobs" element={<JobListingsPage />} />
-          <Route path="/jobs/:jobId" element={<JobDetailsPage />} />
+          {/* Public auth routes */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route
+            path="/login"
+            element={
+              <PublicOnlyRoute>
+                <AuthPage isLogin={true} />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              <PublicOnlyRoute>
+                <AuthPage isLogin={false} />
+              </PublicOnlyRoute>
+            }
+          />
+
+          {/* Protected application routes */}
+          <Route
+            path="/home"
+            element={
+              <ProtectedRoute>
+                <HomePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/jobs"
+            element={
+              <ProtectedRoute>
+                <JobListingsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/jobs/:jobId"
+            element={
+              <ProtectedRoute>
+                <JobDetailsPage />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Protected Routes */}
           <Route
             path="/dashboard"
             element={
               <ProtectedRoute>
-                <CandidateDashboard />
+                <DynamicDashboard />
               </ProtectedRoute>
             }
           />
@@ -69,8 +118,8 @@ function App() {
             }
           />
 
-          {/* Catch all - redirect to home */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          {/* Catch all */}
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </AuthProvider>
     </Router>

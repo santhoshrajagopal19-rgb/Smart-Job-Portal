@@ -27,7 +27,7 @@ const CandidateDashboard = () => {
 
   useEffect(() => {
     if (!isCandidate) {
-      navigate('/');
+      navigate('/dashboard');
       return;
     }
 
@@ -85,7 +85,7 @@ const CandidateDashboard = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate('/login');
   };
 
   if (loading) {

@@ -20,7 +20,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     if (!isAdmin) {
-      navigate('/');
+      navigate('/dashboard');
       return;
     }
     fetchData();
@@ -66,7 +66,7 @@ const AdminDashboard = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate('/login');
   };
 
   if (loading) {

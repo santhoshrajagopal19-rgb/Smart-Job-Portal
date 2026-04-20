@@ -10,7 +10,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate('/login');
     setMobileMenuOpen(false);
   };
 
@@ -19,14 +19,14 @@ const Navbar = () => {
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 text-blue-600 font-bold text-xl">
+          <Link to={isAuthenticated ? '/home' : '/login'} className="flex items-center gap-2 text-blue-600 font-bold text-xl">
             <FiBriefcase size={28} />
             JobPortal
           </Link>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-8">
-            <Link to="/" className="text-gray-700 hover:text-blue-600 transition">
+            <Link to="/home" className="text-gray-700 hover:text-blue-600 transition">
               Home
             </Link>
             <Link to="/jobs" className="text-gray-700 hover:text-blue-600 transition">
@@ -43,7 +43,7 @@ const Navbar = () => {
                       ? '/recruiter-dashboard'
                       : isAdmin
                       ? '/admin-dashboard'
-                      : '/'
+                      : '/home'
                   }
                   className="text-gray-700 hover:text-blue-600 transition"
                 >
@@ -87,7 +87,7 @@ const Navbar = () => {
         {mobileMenuOpen && (
           <div className="md:hidden pb-4 space-y-3">
             <Link
-              to="/"
+              to="/home"
               className="block text-gray-700 hover:text-blue-600 transition"
               onClick={() => setMobileMenuOpen(false)}
             >
@@ -111,7 +111,7 @@ const Navbar = () => {
                       ? '/recruiter-dashboard'
                       : isAdmin
                       ? '/admin-dashboard'
-                      : '/'
+                      : '/home'
                   }
                   className="block text-gray-700 hover:text-blue-600 transition"
                   onClick={() => setMobileMenuOpen(false)}
