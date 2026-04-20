@@ -105,7 +105,7 @@ const getJobApplications = async (req, res) => {
     }
 
     const applications = await Application.find({ jobId })
-      .populate('candidateId', 'name email phone skills location resume')
+      .populate('candidateId', 'name email phone skills location resume bio createdAt')
       .skip(skip)
       .limit(limit)
       .sort({ appliedAt: -1 });
